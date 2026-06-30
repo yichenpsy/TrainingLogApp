@@ -29,23 +29,25 @@ struct RecordTrainingView: View {
             }
             
             Section("Exercises") {
-                ForEach($exerciseRecords) { $record in
+                ForEach(exerciseRecords.indices, id: \.self) { recordIndex in
                     VStack(alignment: .leading, spacing: 8) {
-                        Text(record.exercise.name)
+                        Text(exerciseRecords[recordIndex].exercise.name)
                             .font(.headline)
                         
-                        Text(record.exercise.movementPattern.rawValue)
+                        Text(exerciseRecords[recordIndex].exercise.movementPattern.rawValue)
                             .font(.caption)
                             .foregroundStyle(.secondary)
                         
-                        ForEach($record.sets) { $set in
-                            TextField("Reps", text: $set.reps)
-                            TextField("Intensity", text: $set.intensity)
-                            TextField("Note", text: $set.note)
+                        ForEach(exerciseRecords[recordIndex].sets.indices, id: \.self) { setIndex in
+                            TextField("Reps", text: $exerciseRecords[recordIndex].sets[setIndex].reps)
+                            
+                            TextField("Intensity", text: $exerciseRecords[recordIndex].sets[setIndex].intensity)
+                            
+                            TextField("Note", text: $exerciseRecords[recordIndex].sets[setIndex].note)
                         }
                         
                         Button("Add Set") {
-                            record.sets.append(TrainingSet())
+                            exerciseRecords[recordIndex].sets.append(TrainingSet())
                         }
                     }
                     .padding(.vertical, 6)
@@ -77,6 +79,10 @@ struct RecordTrainingView: View {
 }
 
 #Preview {
-    RecordTrainingView(plan: TrainingStore().plans[0])
-        .environment(TrainingStore())
+    let store = TrainingStore()
+    
+    NavigationStack {
+        RecordTrainingView(plan: store.plans[0])
+    }
+    .environment(store)
 }
