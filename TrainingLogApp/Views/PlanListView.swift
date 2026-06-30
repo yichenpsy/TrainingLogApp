@@ -7,19 +7,23 @@ struct PlanListView: View {
         NavigationStack {
             List {
                 ForEach(store.plans) { plan in
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text(plan.name)
-                            .font(.headline)
-                        
-                        Text("\(plan.exercises.count) exercises")
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                        
-                        Text(patternText(for: plan))
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
+                    NavigationLink {
+                        RecordTrainingView(plan: plan)
+                    } label: {
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text(plan.name)
+                                .font(.headline)
+                            
+                            Text("\(plan.exercises.count) exercises")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                            
+                            Text(patternText(for: plan))
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                        .padding(.vertical, 4)
                     }
-                    .padding(.vertical, 4)
                 }
             }
             .navigationTitle("Training Plans")
