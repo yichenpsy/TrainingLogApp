@@ -6,23 +6,33 @@ struct PlanListView: View {
     var body: some View {
         NavigationStack {
             List {
-                ForEach(store.plans) { plan in
+                Section {
                     NavigationLink {
-                        RecordTrainingView(plan: plan)
+                        PlanBuilderView()
                     } label: {
-                        VStack(alignment: .leading, spacing: 6) {
-                            Text(plan.name)
-                                .font(.headline)
-                            
-                            Text("\(plan.exercises.count) exercises")
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
-                            
-                            Text(patternText(for: plan))
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
+                        Label("Define Plan", systemImage: "plus.circle")
+                    }
+                }
+                
+                Section("Training Plans") {
+                    ForEach(store.plans) { plan in
+                        NavigationLink {
+                            RecordTrainingView(plan: plan)
+                        } label: {
+                            VStack(alignment: .leading, spacing: 6) {
+                                Text(plan.name)
+                                    .font(.headline)
+                                
+                                Text("\(plan.exercises.count) exercises")
+                                    .font(.subheadline)
+                                    .foregroundStyle(.secondary)
+                                
+                                Text(patternText(for: plan))
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                            .padding(.vertical, 4)
                         }
-                        .padding(.vertical, 4)
                     }
                 }
             }
