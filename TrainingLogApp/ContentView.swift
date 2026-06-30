@@ -13,17 +13,14 @@ import SwiftUI
 //
 //  Created by Yichen Zhong on 27.06.26.
 
+import SwiftUI
+
 struct ContentView: View {
-    @Environment(TrainingStore.self) private var store
-    
     var body: some View {
-        NavigationStack {
-            PlanListView()
-        }
+        Text("Training Log App")
     }
 }
 
 #Preview {
     ContentView()
-        .environment(TrainingStore())
 }

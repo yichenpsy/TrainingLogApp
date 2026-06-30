@@ -8,13 +8,10 @@
 import SwiftUI
 
 @main
-struct TrainingLogAppApp: App {
-    @State private var store = TrainingStore()
-    
+struct TrainingLogApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environment(store)
         }
     }
 }
