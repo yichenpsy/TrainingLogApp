@@ -11,22 +11,28 @@ struct RecordsView: View {
                         .foregroundStyle(.secondary)
                 } else {
                     ForEach(store.sessions) { session in
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text(session.planName)
-                                .font(.headline)
-                            
-                            Text(session.date, format: .dateTime.day().month().year().hour().minute())
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                            
-                            Text("Rate of Perceived Exertion: \(session.rpe)")
-                                .font(.subheadline)
-                            
-                            Text("\(session.exerciseRecords.count) exercises")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
+                        NavigationLink {
+                            RecordDetailView(session: session)
+                        } label: {
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text(session.planName)
+                                    .font(.headline)
+                                
+                                Text(session.date, format: .dateTime.day().month().year().hour().minute())
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                                
+                                if !session.rpe.isEmpty {
+                                    Text("RPE: \(session.rpe)")
+                                        .font(.subheadline)
+                                }
+                                
+                                Text("\(session.exerciseRecords.count) exercises")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                            .padding(.vertical, 4)
                         }
-                        .padding(.vertical, 4)
                     }
                 }
             }
