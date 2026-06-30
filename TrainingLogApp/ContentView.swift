@@ -27,6 +27,11 @@ struct ContentView: View {
                 .tabItem {
                     Label("Records", systemImage: "clock")
                 }
+            
+            ExerciseListView()
+                .tabItem {
+                    Label("Exercises", systemImage: "figure.strengthtraining.traditional")
+                }
         }
     }
 }
