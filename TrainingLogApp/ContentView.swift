@@ -17,7 +17,17 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        PlanListView()
+        TabView {
+            PlanListView()
+                .tabItem {
+                    Label("Plans", systemImage: "list.bullet")
+                }
+            
+            RecordsView()
+                .tabItem {
+                    Label("Records", systemImage: "clock")
+                }
+        }
     }
 }
 

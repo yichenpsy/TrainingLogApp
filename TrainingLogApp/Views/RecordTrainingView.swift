@@ -54,8 +54,8 @@ struct RecordTrainingView: View {
                 }
             }
             
-            Section("RPE") {
-                TextField("e.g. 6-7", text: $rpe)
+            Section("Rate of Perceived Exertion") {
+                TextField("1(easy) - 3(hard)", text: $rpe)
             }
             
             Button("Save Training Session") {
