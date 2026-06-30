@@ -9,6 +9,7 @@ import SwiftUI
 
 @main
 struct TrainingLogApp: App {
+    /// Single source of truth injected into every view through the SwiftUI environment.
     @State private var store = TrainingStore()
     
     var body: some Scene {

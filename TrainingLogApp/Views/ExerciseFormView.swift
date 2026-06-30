@@ -7,7 +7,9 @@
 
 import SwiftUI
 
+/// Form for creating a reusable exercise definition.
 struct ExerciseFormView: View {
+    /// Shared store receives the saved exercise, while dismiss closes the form.
     @Environment(TrainingStore.self) private var store
     @Environment(\.dismiss) private var dismiss
     
@@ -42,6 +44,7 @@ struct ExerciseFormView: View {
             }
             
             Button("Save Exercise") {
+                // Build a domain model from the form state before adding it to the store.
                 let exercise = Exercise(
                     name: name,
                     movementPattern: selectedPattern,
@@ -54,6 +57,7 @@ struct ExerciseFormView: View {
                 store.addExercise(exercise)
                 dismiss()
             }
+            // A named exercise is the minimum required data for saving.
             .disabled(name.trimmingCharacters(in: .whitespaces).isEmpty)
         }
         .navigationTitle("Define Exercise")

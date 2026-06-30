@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/// Shows saved exercises and provides navigation to the exercise form.
 struct ExerciseListView: View {
     @Environment(TrainingStore.self) private var store
     

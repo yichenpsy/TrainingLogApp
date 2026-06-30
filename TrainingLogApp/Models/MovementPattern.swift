@@ -1,3 +1,4 @@
+/// High-level movement categories used to organize exercises and plans.
 enum MovementPattern: String, CaseIterable, Identifiable {
     case squat = "Squat"
     case hinge = "Hinge"
@@ -7,6 +8,7 @@ enum MovementPattern: String, CaseIterable, Identifiable {
     case rotation = "Rotation"
     case carry = "Carry"
     
+    /// Uses the display name as the stable ID for SwiftUI lists and pickers.
     var id: String {
         rawValue
     }

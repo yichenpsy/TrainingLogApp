@@ -14,13 +14,17 @@
 
 import Foundation
 
+/// Defines one exercise that can be reused in plans and training records.
 struct Exercise: Identifiable, Hashable {
     let id: UUID
     var name: String
     var movementPattern: MovementPattern
+    /// Optional preparation instruction shown before doing the exercise.
     var warmUp: String
+    /// Describes how intensity is measured, such as kg, sec, band, or level.
     var intensityUnit: String
     var defaultIntensity: String
+    /// Main technique cue or execution standard for the exercise.
     var howTo: String
     
     init(

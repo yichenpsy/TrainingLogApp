@@ -1,10 +1,12 @@
 import SwiftUI
 
+/// Form for creating a training plan from the exercises currently in the store.
 struct PlanBuilderView: View {
     @Environment(TrainingStore.self) private var store
     @Environment(\.dismiss) private var dismiss
     
     @State private var planName = ""
+    /// Tracks selected exercises by ID so toggle state stays stable while the list renders.
     @State private var selectedExerciseIDs: Set<UUID> = []
     
     var body: some View {
@@ -27,6 +29,7 @@ struct PlanBuilderView: View {
             }
             
             Button("Save Plan") {
+                // Preserve the store's exercise order when converting selected IDs to exercises.
                 let selectedExercises = store.exercises.filter {
                     selectedExerciseIDs.contains($0.id)
                 }
@@ -39,11 +42,13 @@ struct PlanBuilderView: View {
                 store.addPlan(plan)
                 dismiss()
             }
+            // A plan needs both a name and at least one exercise.
             .disabled(planName.trimmingCharacters(in: .whitespaces).isEmpty || selectedExerciseIDs.isEmpty)
         }
         .navigationTitle("Define Plan")
     }
     
+    /// Bridges the selected ID set into the Binding<Bool> required by Toggle.
     func binding(for exercise: Exercise) -> Binding<Bool> {
         Binding(
             get: {

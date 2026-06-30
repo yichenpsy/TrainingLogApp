@@ -1,5 +1,6 @@
 import SwiftUI
 
+/// Shows the history of saved sessions and links to each session detail.
 struct RecordsView: View {
     @Environment(TrainingStore.self) private var store
     

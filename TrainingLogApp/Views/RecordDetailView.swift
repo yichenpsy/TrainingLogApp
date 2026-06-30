@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/// Read-only detail screen for a saved training session.
 struct RecordDetailView: View {
     let session: TrainingSession
     

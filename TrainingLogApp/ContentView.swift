@@ -2,11 +2,12 @@ import SwiftUI
 
 // Yichen Zhong, 1 Person
 //
+// Yichen Zhong, 1 Person
 // UC Trainingsplan auswählen
 // UC Trainingseinheit erfassen
-// UC Bewegung definieren
-// UC Trainingsplan definieren
 // UC Trainingsverlauf anzeigen
+// UC Übung definieren
+// UC Trainingsplan definieren
 
 //  ContentView.swift
 //  TrainingLogApp
@@ -15,6 +16,7 @@ import SwiftUI
 
 import SwiftUI
 
+/// Root tab layout for the three main workflows: plans, records, and exercises.
 struct ContentView: View {
     var body: some View {
         TabView {

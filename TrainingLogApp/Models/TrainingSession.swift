@@ -11,10 +11,12 @@
 
 import Foundation
 
+/// Captures one completed workout, including the plan name, effort, and sets.
 struct TrainingSession: Identifiable, Hashable {
     let id: UUID
     var date: Date
     var planName: String
+    /// Rate of perceived exertion for the whole session.
     var rpe: String
     var exerciseRecords: [ExerciseTrainingRecord]
     

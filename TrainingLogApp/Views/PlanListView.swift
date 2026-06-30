@@ -1,5 +1,6 @@
 import SwiftUI
 
+/// Lists training plans and opens the recording flow for the selected plan.
 struct PlanListView: View {
     @Environment(TrainingStore.self) private var store
     
@@ -40,6 +41,7 @@ struct PlanListView: View {
         }
     }
     
+    /// Summarizes the movement pattern mix displayed under each plan.
     func patternText(for plan: TrainingPlan) -> String {
         let patterns = plan.exercises.map { $0.movementPattern.rawValue }
         return patterns.joined(separator: " · ")

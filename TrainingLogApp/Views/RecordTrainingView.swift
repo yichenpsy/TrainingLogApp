@@ -1,5 +1,6 @@
 import SwiftUI
 
+/// Records sets and session effort for a selected training plan.
 struct RecordTrainingView: View {
     @Environment(TrainingStore.self) private var store
     
@@ -12,6 +13,7 @@ struct RecordTrainingView: View {
     init(plan: TrainingPlan) {
         self.plan = plan
         
+        // Start each exercise with one blank set so the form is ready for input.
         let records = plan.exercises.map { exercise in
             ExerciseTrainingRecord(
                 exercise: exercise,
@@ -47,6 +49,7 @@ struct RecordTrainingView: View {
                         }
                         
                         Button("Add Set") {
+                            // Appending to the nested state array creates another editable set row.
                             exerciseRecords[recordIndex].sets.append(TrainingSet())
                         }
                     }
@@ -59,6 +62,7 @@ struct RecordTrainingView: View {
             }
             
             Button("Save Training Session") {
+                // Save a snapshot of the current form state as a completed session.
                 let session = TrainingSession(
                     planName: plan.name,
                     rpe: rpe,

@@ -2,12 +2,14 @@ import Foundation
 import Observation
 
 @Observable
+/// Shared in-memory app state for exercises, plans, and recorded sessions.
 class TrainingStore {
     var exercises: [Exercise] = []
     var plans: [TrainingPlan] = []
     var sessions: [TrainingSession] = []
     
     init() {
+        // Seed data keeps the app usable immediately and provides preview content.
         let pullUp = Exercise(
             name: "Band-assisted Pull-up",
             movementPattern: .pull,
@@ -46,6 +48,7 @@ class TrainingStore {
         
         exercises = [pullUp, frontSquat, row, plank]
         
+        // Starter plans reuse the same exercise values so records can copy them later.
         plans = [
             TrainingPlan(
                 name: "Plan A",

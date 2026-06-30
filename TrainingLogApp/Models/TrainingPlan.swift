@@ -9,6 +9,7 @@
 
 import Foundation
 
+/// A reusable workout template made from an ordered list of exercises.
 struct TrainingPlan: Identifiable, Hashable {
     let id: UUID
     var name: String
