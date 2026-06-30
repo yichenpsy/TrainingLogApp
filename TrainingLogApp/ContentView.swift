@@ -17,10 +17,11 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        Text("Training Log App")
+        PlanListView()
     }
 }
 
 #Preview {
     ContentView()
+        .environment(TrainingStore())
 }
