@@ -1,6 +1,3 @@
-import SwiftUI
-
-// Yichen Zhong, 1 Person
 //
 // Yichen Zhong, 1 Person
 // UC Trainingsplan auswählen

@@ -9,7 +9,7 @@
 import Foundation
 
 /// One completed set within an exercise record.
-struct TrainingSet: Identifiable, Hashable {
+struct TrainingSet: Identifiable, Hashable, Codable {
     let id: UUID
     /// Stored as text so it can represent reps, duration, or side-specific work.
     var reps: String

@@ -1,5 +1,5 @@
 /// High-level movement categories used to organize exercises and plans.
-enum MovementPattern: String, CaseIterable, Identifiable {
+enum MovementPattern: String, CaseIterable, Identifiable, Codable {
     case squat = "Squat"
     case hinge = "Hinge"
     case lunge = "Lunge"

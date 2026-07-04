@@ -12,7 +12,7 @@
 import Foundation
 
 /// Captures one completed workout, including the plan name, effort, and sets.
-struct TrainingSession: Identifiable, Hashable {
+struct TrainingSession: Identifiable, Hashable, Codable {
     let id: UUID
     var date: Date
     var planName: String

@@ -15,7 +15,7 @@
 import Foundation
 
 /// Defines one exercise that can be reused in plans and training records.
-struct Exercise: Identifiable, Hashable {
+struct Exercise: Identifiable, Hashable, Codable {
     let id: UUID
     var name: String
     var movementPattern: MovementPattern

@@ -15,7 +15,7 @@ Pull-up
 import Foundation
 
 /// Stores the performed sets for a single exercise inside one training session.
-struct ExerciseTrainingRecord: Identifiable, Hashable {
+struct ExerciseTrainingRecord: Identifiable, Hashable, Codable {
     let id: UUID
     var exercise: Exercise
     var sets: [TrainingSet]
