@@ -12,40 +12,38 @@ struct RecordsView: View {
                         .foregroundStyle(.secondary)
                 } else {
                     ForEach(store.sessions) { session in
-                        ZStack(alignment: .bottomTrailing) {
-                            NavigationLink {
-                                RecordDetailView(session: session)
-                            } label: {
-                                VStack(alignment: .leading, spacing: 8) {
-                                    Text(session.planName)
-                                        .font(.headline)
-                                    
-                                    Text(session.date, format: .dateTime.day().month().year().hour().minute())
-                                        .font(.caption)
-                                        .foregroundStyle(.secondary)
-                                    
-                                    if !session.rpe.isEmpty {
-                                        Text("RPE: \(session.rpe)")
-                                            .font(.subheadline)
-                                    }
-                                    
+                        NavigationLink {
+                            RecordDetailView(session: session)
+                        } label: {
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text(session.planName)
+                                    .font(.headline)
+                                
+                                Text(session.date, format: .dateTime.day().month().year().hour().minute())
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                                
+                                if !session.rpe.isEmpty {
+                                    Text("RPE: \(session.rpe)")
+                                        .font(.subheadline)
+                                }
+                                
+                                HStack(spacing: 8) {
                                     Text("\(session.exerciseRecords.count) exercises")
                                         .font(.caption)
                                         .foregroundStyle(.secondary)
+                                    
+                                    Button {
+                                        store.deleteSession(session)
+                                    } label: {
+                                        Image(systemName: "trash")
+                                            .font(.caption)
+                                            .foregroundStyle(.gray)
+                                    }
+                                    .buttonStyle(.plain)
                                 }
-                                .padding(.vertical, 4)
-                                .padding(.trailing, 36)
                             }
-                            
-                            Button {
-                                store.deleteSession(session)
-                            } label: {
-                                Image(systemName: "trash")
-                                    .font(.caption)
-                                    .foregroundStyle(.gray)
-                                    .padding(6)
-                            }
-                            .buttonStyle(.plain)
+                            .padding(.vertical, 4)
                         }
                     }
                 }

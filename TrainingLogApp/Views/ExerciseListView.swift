@@ -51,6 +51,7 @@ struct ExerciseListView: View {
                                 Button("Edit") {
                                     exerciseToEdit = exercise
                                 }
+                                .foregroundStyle(.gray)
                                 .buttonStyle(BorderlessButtonStyle())
                                 
                                 Button {
@@ -61,7 +62,7 @@ struct ExerciseListView: View {
                                     }
                                 } label: {
                                     Image(systemName: "trash")
-                                        .foregroundStyle(.red)
+                                        .foregroundStyle(.gray)
                                 }
                                 .buttonStyle(BorderlessButtonStyle())
                             }
