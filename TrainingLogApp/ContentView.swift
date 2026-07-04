@@ -18,22 +18,34 @@ import SwiftUI
 
 /// Root tab layout for the three main workflows: plans, records, and exercises.
 struct ContentView: View {
+    @Environment(TrainingStore.self) private var store
+    
     var body: some View {
-        TabView {
+        TabView(selection: Binding(
+            get: {
+                store.selectedTab
+            },
+            set: { newTab in
+                store.selectedTab = newTab
+            }
+        )) {
             PlanListView()
                 .tabItem {
                     Label("Plans", systemImage: "list.bullet")
                 }
+                .tag(AppTab.plans)
             
             RecordsView()
                 .tabItem {
                     Label("Records", systemImage: "clock")
                 }
+                .tag(AppTab.records)
             
             ExerciseListView()
                 .tabItem {
                     Label("Exercises", systemImage: "figure.strengthtraining.traditional")
                 }
+                .tag(AppTab.exercises)
         }
     }
 }

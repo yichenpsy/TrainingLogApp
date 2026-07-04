@@ -1,12 +1,21 @@
 import Foundation
 import Observation
 
+enum AppTab: Hashable {
+    case plans
+    case records
+    case exercises
+}
+
+
 @Observable
 /// Shared in-memory app state for exercises, plans, and recorded sessions.
 class TrainingStore {
     var exercises: [Exercise] = []
     var plans: [TrainingPlan] = []
     var sessions: [TrainingSession] = []
+    
+    var selectedTab: AppTab = .plans
     
     init() {
         // Seed data keeps the app usable immediately and provides preview content.

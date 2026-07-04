@@ -8,12 +8,12 @@ struct RecordTrainingView: View {
     
     @State private var currentExerciseIndex = 0
     @State private var exerciseRecords: [ExerciseTrainingRecord]
-    @State private var saved = false
     @State private var restSeconds: Int? = nil
     
     @State private var selectedRestText: String? = nil
     @State private var showCustomRestInput = false
     @State private var customRestSeconds = ""
+    @State private var finishedSession: TrainingSession? = nil
     
     init(plan: TrainingPlan) {
         self.plan = plan
@@ -42,16 +42,13 @@ struct RecordTrainingView: View {
                 timerButtons
                 lastRecordBox
                 navigationButtons
-                
-                if saved {
-                    Text("Saved")
-                        .font(.headline)
-                        .foregroundStyle(.green)
-                }
             }
             .padding()
         }
         .navigationTitle("Record Training")
+        .navigationDestination(item: $finishedSession) { session in
+            RecordDetailView(session: session)
+        }
         .alert("Custom Rest", isPresented: $showCustomRestInput) {
             TextField("Seconds", text: $customRestSeconds)
             
@@ -394,7 +391,7 @@ extension RecordTrainingView {
         )
         
         store.addSession(session)
-        saved = true
+        store.selectedTab = .records
     }
     
     private var cleanedExerciseRecords: [ExerciseTrainingRecord] {
