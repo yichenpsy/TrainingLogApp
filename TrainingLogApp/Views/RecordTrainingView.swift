@@ -1,23 +1,27 @@
 import SwiftUI
 
-/// Records sets and session effort for a selected training plan.
 struct RecordTrainingView: View {
     @Environment(TrainingStore.self) private var store
+    @Environment(\.dismiss) private var dismiss
     
     let plan: TrainingPlan
     
+    @State private var currentExerciseIndex = 0
     @State private var exerciseRecords: [ExerciseTrainingRecord]
-    @State private var rpe: String = ""
     @State private var saved = false
+    @State private var restSeconds: Int? = nil
     
     init(plan: TrainingPlan) {
         self.plan = plan
         
-        // Start each exercise with one blank set so the form is ready for input.
         let records = plan.exercises.map { exercise in
             ExerciseTrainingRecord(
                 exercise: exercise,
-                sets: [TrainingSet()]
+                sets: [
+                    TrainingSet(reps: "6", intensity: exercise.defaultIntensity, note: ""),
+                    TrainingSet(reps: "", intensity: "", note: ""),
+                    TrainingSet(reps: "", intensity: "", note: "")
+                ]
             )
         }
         
@@ -25,68 +29,314 @@ struct RecordTrainingView: View {
     }
     
     var body: some View {
-        Form {
-            Section("Plan") {
-                Text(plan.name)
-            }
-            
-            Section("Exercises") {
-                ForEach(exerciseRecords.indices, id: \.self) { recordIndex in
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text(exerciseRecords[recordIndex].exercise.name)
-                            .font(.headline)
-                        
-                        Text(exerciseRecords[recordIndex].exercise.movementPattern.rawValue)
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                        
-                        ForEach(exerciseRecords[recordIndex].sets.indices, id: \.self) { setIndex in
-                            TextField("Reps", text: $exerciseRecords[recordIndex].sets[setIndex].reps)
-                            
-                            TextField("Intensity", text: $exerciseRecords[recordIndex].sets[setIndex].intensity)
-                            
-                            TextField("Note", text: $exerciseRecords[recordIndex].sets[setIndex].note)
-                        }
-                        
-                        Button("Add Set") {
-                            // Appending to the nested state array creates another editable set row.
-                            exerciseRecords[recordIndex].sets.append(TrainingSet())
-                        }
-                    }
-                    .padding(.vertical, 6)
+        ScrollView {
+            VStack(spacing: 16) {
+                header
+                exerciseCard
+                mediaPlaceholder
+                setsInputCard
+                timerButtons
+                lastRecordBox
+                navigationButtons
+                
+                if saved {
+                    Text("Saved")
+                        .font(.headline)
+                        .foregroundStyle(.green)
                 }
             }
-            
-            Section("Rate of Perceived Exertion") {
-                TextField("1(easy) - 3(hard)", text: $rpe)
-            }
-            
-            Button("Save Training Session") {
-                // Save a snapshot of the current form state as a completed session.
-                let session = TrainingSession(
-                    planName: plan.name,
-                    rpe: rpe,
-                    exerciseRecords: exerciseRecords
-                )
-                
-                store.addSession(session)
-                saved = true
-            }
-            
-            if saved {
-                Text("Saved")
-                    .foregroundStyle(.green)
-            }
+            .padding()
         }
         .navigationTitle("Record Training")
     }
 }
 
-#Preview {
-    let store = TrainingStore()
+extension RecordTrainingView {
     
-    NavigationStack {
-        RecordTrainingView(plan: store.plans[0])
+    private var currentRecord: ExerciseTrainingRecord {
+        exerciseRecords[currentExerciseIndex]
     }
-    .environment(store)
+    
+    private var currentExercise: Exercise {
+        currentRecord.exercise
+    }
+    
+    private var header: some View {
+        HStack {
+            Text(plan.name)
+                .font(.largeTitle)
+                .fontWeight(.bold)
+            
+            Spacer()
+            
+            Text("\(currentExerciseIndex + 1) / \(plan.exercises.count)")
+                .font(.headline)
+                .padding(.horizontal, 28)
+                .padding(.vertical, 10)
+                .background(
+                    RoundedRectangle(cornerRadius: 20)
+                        .fill(.gray.opacity(0.08))
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 20)
+                        .stroke(.gray.opacity(0.25), lineWidth: 1)
+                )
+        }
+    }
+    
+    private var exerciseCard: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(currentExercise.name)
+                .font(.title3)
+                .fontWeight(.bold)
+            
+            Text("Pattern: \(currentExercise.movementPattern.rawValue)")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding()
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(.gray.opacity(0.05))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(.gray.opacity(0.25), lineWidth: 1)
+        )
+    }
+    
+    private var mediaPlaceholder: some View {
+        RoundedRectangle(cornerRadius: 16)
+            .fill(.gray.opacity(0.08))
+            .frame(height: 190)
+            .overlay {
+                VStack(spacing: 8) {
+                    if !currentExercise.howTo.isEmpty {
+                        Text(currentExercise.howTo)
+                            .font(.headline)
+                            .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.center)
+                    } else {
+                        Text("Photo / video / How to do\nplaceholder")
+                            .font(.headline)
+                            .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.center)
+                    }
+                }
+                .padding()
+            }
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .stroke(.gray.opacity(0.25), lineWidth: 1)
+            )
+    }
+}
+
+extension RecordTrainingView {
+    
+    private var setsInputCard: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Sets")
+                .font(.title2)
+                .fontWeight(.bold)
+            
+            HStack {
+                Text("reps")
+                    .fontWeight(.semibold)
+                    .frame(width: 70, alignment: .leading)
+                
+                Text("Intensity")
+                    .fontWeight(.semibold)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                
+                Text("Notes")
+                    .fontWeight(.semibold)
+                    .frame(width: 110, alignment: .leading)
+            }
+            .font(.subheadline)
+            .foregroundStyle(.secondary)
+            
+            ForEach(exerciseRecords[currentExerciseIndex].sets.indices, id: \.self) { setIndex in
+                HStack {
+                    TextField("0", text: $exerciseRecords[currentExerciseIndex].sets[setIndex].reps)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .frame(width: 70)
+                    
+                    TextField("Intensity", text: $exerciseRecords[currentExerciseIndex].sets[setIndex].intensity)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                    
+                    TextField("Note", text: $exerciseRecords[currentExerciseIndex].sets[setIndex].note)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .frame(width: 110)
+                }
+            }
+            
+            Button {
+                exerciseRecords[currentExerciseIndex].sets.append(TrainingSet())
+            } label: {
+                Image(systemName: "plus")
+                    .font(.title2)
+                    .fontWeight(.bold)
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.plain)
+        }
+        .padding()
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(.white)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(.gray.opacity(0.25), lineWidth: 1)
+        )
+    }
+}
+
+extension RecordTrainingView {
+    
+    private var timerButtons: some View {
+        HStack(spacing: 10) {
+            restButton(title: "30 sec", seconds: 30)
+            restButton(title: "60 sec", seconds: 60)
+            restButton(title: "90 sec", seconds: 90)
+            restButton(title: "custom", seconds: nil)
+        }
+    }
+    
+    private func restButton(title: String, seconds: Int?) -> some View {
+        Button {
+            restSeconds = seconds
+        } label: {
+            Text(title)
+                .font(.subheadline)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 10)
+                .frame(maxWidth: .infinity)
+        }
+        .foregroundStyle(.primary)
+        .background(
+            RoundedRectangle(cornerRadius: 18)
+                .fill(.gray.opacity(restSeconds == seconds ? 0.18 : 0.06))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 18)
+                .stroke(.gray.opacity(0.25), lineWidth: 1)
+        )
+    }
+}
+
+extension RecordTrainingView {
+    
+    private var lastRecordBox: some View {
+        Text(lastRecordText)
+            .font(.headline)
+            .foregroundStyle(.green)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding()
+            .background(
+                RoundedRectangle(cornerRadius: 14)
+                    .fill(.green.opacity(0.10))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 14)
+                    .stroke(.green.opacity(0.45), lineWidth: 1)
+            )
+    }
+    
+    private var lastRecordText: String {
+        let previousSessions = store.sessions.reversed()
+        
+        for session in previousSessions {
+            for record in session.exerciseRecords {
+                if record.exercise.id == currentExercise.id,
+                   let firstSet = record.sets.first {
+                    return "Last: \(firstSet.reps) reps with \(firstSet.intensity)"
+                }
+            }
+        }
+        
+        return "Last: no previous record"
+    }
+    
+    private var navigationButtons: some View {
+        HStack(spacing: 20) {
+            Button {
+                goBack()
+            } label: {
+                Text("Back")
+                    .font(.headline)
+                    .fontWeight(.bold)
+                    .frame(maxWidth: .infinity)
+                    .padding()
+            }
+            .foregroundStyle(.black)
+            .background(
+                RoundedRectangle(cornerRadius: 14)
+                    .fill(.gray.opacity(0.06))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 14)
+                    .stroke(.gray.opacity(0.25), lineWidth: 1)
+            )
+            
+            Button {
+                goNextOrFinish()
+            } label: {
+                Text(currentExerciseIndex == plan.exercises.count - 1 ? "Finish" : "Next")
+                    .font(.headline)
+                    .fontWeight(.bold)
+                    .frame(maxWidth: .infinity)
+                    .padding()
+            }
+            .foregroundStyle(.white)
+            .background(
+                RoundedRectangle(cornerRadius: 14)
+                    .fill(.black)
+            )
+        }
+    }
+    
+    private func goBack() {
+        if currentExerciseIndex > 0 {
+            currentExerciseIndex -= 1
+            restSeconds = nil
+        }
+    }
+    
+    private func goNextOrFinish() {
+        if currentExerciseIndex < plan.exercises.count - 1 {
+            currentExerciseIndex += 1
+            restSeconds = nil
+        } else {
+            saveSession()
+        }
+    }
+    
+    private func saveSession() {
+        let session = TrainingSession(
+            planName: plan.name,
+            rpe: "",
+            exerciseRecords: cleanedExerciseRecords
+        )
+        
+        store.addSession(session)
+        saved = true
+    }
+    
+    private var cleanedExerciseRecords: [ExerciseTrainingRecord] {
+        exerciseRecords.map { record in
+            let cleanedSets = record.sets.filter { set in
+                !set.reps.trimmingCharacters(in: .whitespaces).isEmpty ||
+                !set.intensity.trimmingCharacters(in: .whitespaces).isEmpty ||
+                !set.note.trimmingCharacters(in: .whitespaces).isEmpty
+            }
+            
+            return ExerciseTrainingRecord(
+                exercise: record.exercise,
+                sets: cleanedSets
+            )
+        }
+    }
 }
