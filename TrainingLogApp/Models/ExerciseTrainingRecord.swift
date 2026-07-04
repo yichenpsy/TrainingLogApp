@@ -6,6 +6,8 @@
 //
 
 /**
+Example:
+ 
 Pull-up
 → 6 reps, yellow band
 → 5 reps, yellow band

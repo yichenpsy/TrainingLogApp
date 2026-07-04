@@ -18,6 +18,7 @@ struct RecordTrainingView: View {
     init(plan: TrainingPlan) {
         self.plan = plan
         
+        // Start from the selected plan so the user records one exercise at a time.
         let records = plan.exercises.map { exercise in
             ExerciseTrainingRecord(
                 exercise: exercise,
@@ -268,6 +269,7 @@ extension RecordTrainingView {
             exerciseRecords[currentExerciseIndex].sets.append(TrainingSet())
         }
         
+        // Rest belongs to the last set the user touched, so it is saved with that set.
         let setIndex = currentActiveSetIndex()
         let restText = "Rest: \(title)"
         let oldNote = exerciseRecords[currentExerciseIndex].sets[setIndex].note
@@ -419,6 +421,7 @@ extension RecordTrainingView {
     
     private var cleanedExerciseRecords: [ExerciseTrainingRecord] {
         exerciseRecords.map { record in
+            // Empty placeholder sets should not appear in the saved training history.
             let cleanedSets = record.sets.filter { set in
                 !set.reps.trimmingCharacters(in: .whitespaces).isEmpty ||
                 !set.intensity.trimmingCharacters(in: .whitespaces).isEmpty ||

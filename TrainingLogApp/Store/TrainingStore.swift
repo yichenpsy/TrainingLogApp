@@ -18,6 +18,7 @@ class TrainingStore {
     var selectedTab: AppTab = .plans
     
     init() {
+        // User-created data has priority; seed data is only used on the first launch.
         if loadSavedData() {
             return
         }
@@ -117,6 +118,7 @@ class TrainingStore {
         for planIndex in plans.indices {
             for exerciseIndex in plans[planIndex].exercises.indices {
                 if plans[planIndex].exercises[exerciseIndex].id == updatedExercise.id {
+                    // Plans store exercise values, so edits must be copied into existing plans.
                     plans[planIndex].exercises[exerciseIndex] = updatedExercise
                     didUpdate = true
                 }
@@ -135,6 +137,7 @@ class TrainingStore {
     }
 
     func deleteExercise(_ exercise: Exercise) -> Bool {
+        // Keep plans valid by blocking deletion while an exercise is still referenced.
         if isExerciseUsedInPlan(exercise) {
             return false
         }
@@ -155,6 +158,7 @@ class TrainingStore {
     
     private func loadSavedData() -> Bool {
         do {
+            // A single JSON file is enough for this small local-only app.
             let data = try Data(contentsOf: dataFileURL)
             let trainingData = try JSONDecoder().decode(TrainingData.self, from: data)
             
@@ -183,6 +187,7 @@ class TrainingStore {
             encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
             
             let data = try encoder.encode(trainingData)
+            // Atomic writes avoid leaving a broken JSON file if saving is interrupted.
             try data.write(to: dataFileURL, options: [.atomic])
         } catch {
             print("Could not save training data: \(error.localizedDescription)")

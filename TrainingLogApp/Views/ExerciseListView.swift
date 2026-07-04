@@ -30,41 +30,41 @@ struct ExerciseListView: View {
                             .foregroundStyle(.secondary)
                     } else {
                         ForEach(store.exercises) { exercise in
-                            HStack(spacing: 12) {
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text(exercise.name)
-                                        .font(.headline)
-                                    
-                                    Text(exercise.movementPattern.rawValue)
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(exercise.name)
+                                    .font(.headline)
+                                
+                                Text(exercise.movementPattern.rawValue)
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                                
+                                if !exercise.defaultIntensity.isEmpty {
+                                    Text("Default: \(exercise.defaultIntensity)")
                                         .font(.caption)
                                         .foregroundStyle(.secondary)
+                                }
+                                
+                                HStack(spacing: 16) {
+                                    Button("Edit") {
+                                        exerciseToEdit = exercise
+                                    }
+                                    .font(.caption)
+                                    .foregroundStyle(.gray)
+                                    .buttonStyle(.plain)
                                     
-                                    if !exercise.defaultIntensity.isEmpty {
-                                        Text("Default: \(exercise.defaultIntensity)")
+                                    Button {
+                                        let deleted = store.deleteExercise(exercise)
+                                        
+                                        if !deleted {
+                                            showCannotDeleteAlert = true
+                                        }
+                                    } label: {
+                                        Image(systemName: "trash")
                                             .font(.caption)
-                                            .foregroundStyle(.secondary)
+                                            .foregroundStyle(.gray)
                                     }
+                                    .buttonStyle(.plain)
                                 }
-                                
-                                Spacer()
-                                
-                                Button("Edit") {
-                                    exerciseToEdit = exercise
-                                }
-                                .foregroundStyle(.gray)
-                                .buttonStyle(BorderlessButtonStyle())
-                                
-                                Button {
-                                    let deleted = store.deleteExercise(exercise)
-                                    
-                                    if !deleted {
-                                        showCannotDeleteAlert = true
-                                    }
-                                } label: {
-                                    Image(systemName: "trash")
-                                        .foregroundStyle(.gray)
-                                }
-                                .buttonStyle(BorderlessButtonStyle())
                             }
                             .padding(.vertical, 4)
                         }

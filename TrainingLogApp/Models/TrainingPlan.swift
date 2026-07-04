@@ -1,4 +1,6 @@
 /**
+ Example:
+ 
  Plan A
  → Pull-up
  → Squat
