@@ -125,20 +125,43 @@ extension RecordTrainingView {
             .fill(.gray.opacity(0.08))
             .frame(height: 190)
             .overlay {
-                VStack(spacing: 8) {
+                VStack(alignment: .leading, spacing: 12) {
+                    if !currentExercise.warmUp.isEmpty {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Warm-up")
+                                .font(.caption)
+                                .fontWeight(.semibold)
+                                .foregroundStyle(.secondary)
+                            
+                            Text(currentExercise.warmUp)
+                                .font(.subheadline)
+                                .foregroundStyle(.primary)
+                        }
+                    }
+                    
                     if !currentExercise.howTo.isEmpty {
-                        Text(currentExercise.howTo)
-                            .font(.headline)
-                            .foregroundStyle(.secondary)
-                            .multilineTextAlignment(.center)
-                    } else {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("How to do")
+                                .font(.caption)
+                                .fontWeight(.semibold)
+                                .foregroundStyle(.secondary)
+                            
+                            Text(currentExercise.howTo)
+                                .font(.subheadline)
+                                .foregroundStyle(.primary)
+                        }
+                    }
+                    
+                    if currentExercise.warmUp.isEmpty && currentExercise.howTo.isEmpty {
                         Text("Photo / video / How to do\nplaceholder")
                             .font(.headline)
                             .foregroundStyle(.secondary)
                             .multilineTextAlignment(.center)
+                            .frame(maxWidth: .infinity, alignment: .center)
                     }
                 }
                 .padding()
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
             .overlay(
                 RoundedRectangle(cornerRadius: 16)

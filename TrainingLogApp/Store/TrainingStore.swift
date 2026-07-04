@@ -81,4 +81,43 @@ class TrainingStore {
     func addSession(_ session: TrainingSession) {
         sessions.append(session)
     }
+    
+    func updatePlan(_ updatedPlan: TrainingPlan) {
+        if let index = plans.firstIndex(where: { $0.id == updatedPlan.id }) {
+            plans[index] = updatedPlan
+        }
+    }
+
+    func deletePlan(_ plan: TrainingPlan) {
+        plans.removeAll { $0.id == plan.id }
+    }
+
+    func updateExercise(_ updatedExercise: Exercise) {
+        if let index = exercises.firstIndex(where: { $0.id == updatedExercise.id }) {
+            exercises[index] = updatedExercise
+        }
+        
+        for planIndex in plans.indices {
+            for exerciseIndex in plans[planIndex].exercises.indices {
+                if plans[planIndex].exercises[exerciseIndex].id == updatedExercise.id {
+                    plans[planIndex].exercises[exerciseIndex] = updatedExercise
+                }
+            }
+        }
+    }
+
+    func isExerciseUsedInPlan(_ exercise: Exercise) -> Bool {
+        plans.contains { plan in
+            plan.exercises.contains { $0.id == exercise.id }
+        }
+    }
+
+    func deleteExercise(_ exercise: Exercise) -> Bool {
+        if isExerciseUsedInPlan(exercise) {
+            return false
+        }
+        
+        exercises.removeAll { $0.id == exercise.id }
+        return true
+    }
 }

@@ -7,18 +7,29 @@
 
 import SwiftUI
 
-/// Form for creating a reusable exercise definition.
 struct ExerciseFormView: View {
-    /// Shared store receives the saved exercise, while dismiss closes the form.
     @Environment(TrainingStore.self) private var store
     @Environment(\.dismiss) private var dismiss
     
-    @State private var name = ""
-    @State private var selectedPattern: MovementPattern = .squat
-    @State private var warmUp = ""
-    @State private var intensityUnit = ""
-    @State private var defaultIntensity = ""
-    @State private var howTo = ""
+    let exerciseToEdit: Exercise?
+    
+    @State private var name: String
+    @State private var selectedPattern: MovementPattern
+    @State private var warmUp: String
+    @State private var intensityUnit: String
+    @State private var defaultIntensity: String
+    @State private var howTo: String
+    
+    init(exerciseToEdit: Exercise? = nil) {
+        self.exerciseToEdit = exerciseToEdit
+        
+        _name = State(initialValue: exerciseToEdit?.name ?? "")
+        _selectedPattern = State(initialValue: exerciseToEdit?.movementPattern ?? .squat)
+        _warmUp = State(initialValue: exerciseToEdit?.warmUp ?? "")
+        _intensityUnit = State(initialValue: exerciseToEdit?.intensityUnit ?? "")
+        _defaultIntensity = State(initialValue: exerciseToEdit?.defaultIntensity ?? "")
+        _howTo = State(initialValue: exerciseToEdit?.howTo ?? "")
+    }
     
     var body: some View {
         Form {
@@ -43,24 +54,32 @@ struct ExerciseFormView: View {
                     .lineLimit(3...5)
             }
             
-            Button("Save Exercise") {
-                // Build a domain model from the form state before adding it to the store.
-                let exercise = Exercise(
-                    name: name,
-                    movementPattern: selectedPattern,
-                    warmUp: warmUp,
-                    intensityUnit: intensityUnit,
-                    defaultIntensity: defaultIntensity,
-                    howTo: howTo
-                )
-                
-                store.addExercise(exercise)
-                dismiss()
+            Button(exerciseToEdit == nil ? "Save Exercise" : "Update Exercise") {
+                saveExercise()
             }
-            // A named exercise is the minimum required data for saving.
             .disabled(name.trimmingCharacters(in: .whitespaces).isEmpty)
         }
-        .navigationTitle("Define Exercise")
+        .navigationTitle(exerciseToEdit == nil ? "Define Exercise" : "Edit Exercise")
+    }
+    
+    private func saveExercise() {
+        let exercise = Exercise(
+            id: exerciseToEdit?.id ?? UUID(),
+            name: name,
+            movementPattern: selectedPattern,
+            warmUp: warmUp,
+            intensityUnit: intensityUnit,
+            defaultIntensity: defaultIntensity,
+            howTo: howTo
+        )
+        
+        if exerciseToEdit == nil {
+            store.addExercise(exercise)
+        } else {
+            store.updateExercise(exercise)
+        }
+        
+        dismiss()
     }
 }
 
