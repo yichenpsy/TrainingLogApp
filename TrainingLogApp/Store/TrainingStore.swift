@@ -89,6 +89,11 @@ class TrainingStore {
         saveData()
     }
     
+    func deleteSession(_ session: TrainingSession) {
+        sessions.removeAll { $0.id == session.id }
+        saveData()
+    }
+    
     func updatePlan(_ updatedPlan: TrainingPlan) {
         if let index = plans.firstIndex(where: { $0.id == updatedPlan.id }) {
             plans[index] = updatedPlan
