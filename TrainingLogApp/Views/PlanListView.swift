@@ -1,8 +1,9 @@
 import SwiftUI
 
-/// Lists training plans and opens the recording flow for the selected plan.
 struct PlanListView: View {
     @Environment(TrainingStore.self) private var store
+    
+    @State private var selectedPlan: TrainingPlan? = nil
     
     var body: some View {
         NavigationStack {
@@ -17,31 +18,50 @@ struct PlanListView: View {
                 
                 Section("Training Plans") {
                     ForEach(store.plans) { plan in
-                        NavigationLink {
-                            RecordTrainingView(plan: plan)
+                        Button {
+                            selectedPlan = plan
                         } label: {
-                            VStack(alignment: .leading, spacing: 6) {
-                                Text(plan.name)
-                                    .font(.headline)
+                            HStack(spacing: 16) {
+                                VStack(alignment: .leading, spacing: 6) {
+                                    Text(plan.name)
+                                        .font(.headline)
+                                        .foregroundStyle(.primary)
+                                    
+                                    Text("\(plan.exercises.count) exercises")
+                                        .font(.subheadline)
+                                        .foregroundStyle(.secondary)
+                                    
+                                    Text(patternText(for: plan))
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
                                 
-                                Text("\(plan.exercises.count) exercises")
+                                Spacer()
+                                
+                                Text("Start")
                                     .font(.subheadline)
-                                    .foregroundStyle(.secondary)
-                                
-                                Text(patternText(for: plan))
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
+                                    .fontWeight(.semibold)
+                                    .foregroundStyle(.white)
+                                    .padding(.horizontal, 16)
+                                    .padding(.vertical, 8)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 18)
+                                            .fill(.black)
+                                    )
                             }
-                            .padding(.vertical, 4)
+                            .padding(.vertical, 6)
                         }
+                        .buttonStyle(.plain)
                     }
                 }
             }
             .navigationTitle("Training Plans")
+            .navigationDestination(item: $selectedPlan) { plan in
+                RecordTrainingView(plan: plan)
+            }
         }
     }
     
-    /// Summarizes the movement pattern mix displayed under each plan.
     func patternText(for plan: TrainingPlan) -> String {
         let patterns = plan.exercises.map { $0.movementPattern.rawValue }
         return patterns.joined(separator: " · ")
