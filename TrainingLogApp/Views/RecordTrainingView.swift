@@ -154,7 +154,7 @@ extension RecordTrainingView {
                     }
                     
                     if currentExercise.warmUp.isEmpty && currentExercise.howTo.isEmpty {
-                        Text("Photo / video / How to do\nplaceholder")
+                        Text("No warm-up or technique notes saved.")
                             .font(.headline)
                             .foregroundStyle(.secondary)
                             .multilineTextAlignment(.center)

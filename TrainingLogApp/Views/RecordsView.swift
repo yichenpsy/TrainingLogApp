@@ -12,39 +12,41 @@ struct RecordsView: View {
                         .foregroundStyle(.secondary)
                 } else {
                     ForEach(store.sessions) { session in
-                        NavigationLink {
-                            RecordDetailView(session: session)
-                        } label: {
-                            VStack(alignment: .leading, spacing: 8) {
-                                Text(session.planName)
-                                    .font(.headline)
-                                
-                                Text(session.date, format: .dateTime.day().month().year().hour().minute())
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                                
-                                if !session.rpe.isEmpty {
-                                    Text("RPE: \(session.rpe)")
-                                        .font(.subheadline)
-                                }
-                                
-                                HStack(spacing: 8) {
-                                    Text("\(session.exerciseRecords.count) exercises")
+                        VStack(alignment: .leading, spacing: 8) {
+                            NavigationLink {
+                                RecordDetailView(session: session)
+                            } label: {
+                                VStack(alignment: .leading, spacing: 8) {
+                                    Text(session.planName)
+                                        .font(.headline)
+                                    
+                                    Text(session.date, format: .dateTime.day().month().year().hour().minute())
                                         .font(.caption)
                                         .foregroundStyle(.secondary)
                                     
-                                    Button {
-                                        store.deleteSession(session)
-                                    } label: {
-                                        Image(systemName: "trash")
-                                            .font(.caption)
-                                            .foregroundStyle(.gray)
+                                    if !session.rpe.isEmpty {
+                                        Text("RPE: \(session.rpe)")
+                                            .font(.subheadline)
                                     }
-                                    .buttonStyle(.plain)
                                 }
                             }
-                            .padding(.vertical, 4)
+                            
+                            HStack(spacing: 8) {
+                                Text("\(session.exerciseRecords.count) exercises")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                                
+                                Button {
+                                    store.deleteSession(session)
+                                } label: {
+                                    Image(systemName: "trash")
+                                        .font(.caption)
+                                        .foregroundStyle(.gray)
+                                }
+                                .buttonStyle(.plain)
+                            }
                         }
+                        .padding(.vertical, 4)
                     }
                 }
             }
