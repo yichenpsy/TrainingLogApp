@@ -11,6 +11,10 @@ struct RecordTrainingView: View {
     @State private var saved = false
     @State private var restSeconds: Int? = nil
     
+    @State private var selectedRestText: String? = nil
+    @State private var showCustomRestInput = false
+    @State private var customRestSeconds = ""
+    
     init(plan: TrainingPlan) {
         self.plan = plan
         
@@ -48,6 +52,19 @@ struct RecordTrainingView: View {
             .padding()
         }
         .navigationTitle("Record Training")
+        .alert("Custom Rest", isPresented: $showCustomRestInput) {
+            TextField("Seconds", text: $customRestSeconds)
+            
+            Button("Add") {
+                addCustomRestTime()
+            }
+            
+            Button("Cancel", role: .cancel) {
+                customRestSeconds = ""
+            }
+        } message: {
+            Text("Enter rest time in seconds.")
+        }
     }
 }
 
@@ -205,9 +222,64 @@ extension RecordTrainingView {
         }
     }
     
+    private func currentActiveSetIndex() -> Int {
+        let sets = exerciseRecords[currentExerciseIndex].sets
+        
+        for index in sets.indices.reversed() {
+            let set = sets[index]
+            
+            let hasInput =
+                !set.reps.trimmingCharacters(in: .whitespaces).isEmpty ||
+                !set.intensity.trimmingCharacters(in: .whitespaces).isEmpty ||
+                !set.note.trimmingCharacters(in: .whitespaces).isEmpty
+            
+            if hasInput {
+                return index
+            }
+        }
+        
+        return 0
+    }
+    
+    private func addRestTimeToCurrentSet(title: String) {
+        selectedRestText = title
+        
+        if exerciseRecords[currentExerciseIndex].sets.isEmpty {
+            exerciseRecords[currentExerciseIndex].sets.append(TrainingSet())
+        }
+        
+        let setIndex = currentActiveSetIndex()
+        let restText = "Rest: \(title)"
+        let oldNote = exerciseRecords[currentExerciseIndex].sets[setIndex].note
+            .trimmingCharacters(in: .whitespaces)
+        
+        if oldNote.isEmpty {
+            exerciseRecords[currentExerciseIndex].sets[setIndex].note = restText
+        } else {
+            exerciseRecords[currentExerciseIndex].sets[setIndex].note = "\(oldNote); \(restText)"
+        }
+    }
+    
+    private func addCustomRestTime() {
+        let trimmedSeconds = customRestSeconds.trimmingCharacters(in: .whitespaces)
+        
+        if trimmedSeconds.isEmpty {
+            return
+        }
+        
+        let restText = "\(trimmedSeconds) sec"
+        addRestTimeToCurrentSet(title: restText)
+        
+        customRestSeconds = ""
+    }
+    
     private func restButton(title: String, seconds: Int?) -> some View {
         Button {
-            restSeconds = seconds
+            if seconds == nil {
+                showCustomRestInput = true
+            } else {
+                addRestTimeToCurrentSet(title: title)
+            }
         } label: {
             Text(title)
                 .font(.subheadline)
@@ -218,7 +290,7 @@ extension RecordTrainingView {
         .foregroundStyle(.primary)
         .background(
             RoundedRectangle(cornerRadius: 18)
-                .fill(.gray.opacity(restSeconds == seconds ? 0.18 : 0.06))
+                .fill(.gray.opacity(selectedRestText == title ? 0.18 : 0.06))
         )
         .overlay(
             RoundedRectangle(cornerRadius: 18)
